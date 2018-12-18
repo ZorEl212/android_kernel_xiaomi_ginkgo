@@ -7693,6 +7693,15 @@ static inline void adjust_cpus_for_packing(struct task_struct *p,
 		*best_idle_cpu = -1;
 }
 
+static unsigned int uclamp_task_util(struct task_struct *p)
+{
+	unsigned int min_util = uclamp_eff_value(p, UCLAMP_MIN);
+	unsigned int max_util = uclamp_eff_value(p, UCLAMP_MAX);
+	unsigned int est_util = task_util(p);
+
+	return clamp(est_util, min_util, max_util);
+}
+
 static int get_start_cpu(struct task_struct *p)
 {
 	struct root_domain *rd = cpu_rq(smp_processor_id())->rd;
@@ -7959,6 +7968,10 @@ static inline int find_best_target(struct task_struct *p, int *backup_cpu,
 					continue;
 				}
 				if (best_idle_cpu != -1)
+					continue;
+
+				/* Skip CPUs which do not fit task requirements */
+				if (capacity_orig < uclamp_task_util(p))
 					continue;
 
 				/*
@@ -8322,7 +8335,7 @@ static inline struct energy_env *get_eenv(struct task_struct *p, int prev_cpu)
 	 * during energy calculation, but unboosted task
 	 * util for group utilization calculations
 	 */
-	eenv->util_delta = task_util_est(p);
+	eenv->util_delta = uclamp_task_util(p);
 	eenv->util_delta_boosted = boosted_task_util(p);
 
 	cpumask_and(&cpumask_possible_cpus, &p->cpus_allowed, cpu_online_mask);
