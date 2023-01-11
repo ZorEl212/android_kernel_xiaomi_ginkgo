@@ -546,7 +546,7 @@ static ssize_t __cgroup1_procs_write(struct kernfs_open_file *of,
 	if (!ret && !threadgroup &&
 	    !strcmp(of->kn->parent->name, "top-app") &&
 	    task_is_zygote(task)) {
-		devfreq_boost_kick_max(DEVFREQ_CPU_DDR_BW, 1000);
+		devfreq_boost_kick_max(DEVFREQ_CPU_DDR_BW, 1000, false);
 	}
 
 out_finish:

@@ -121,10 +121,11 @@ bool df_boost_within_input(unsigned long timeout_ms)
 
 
 void devfreq_boost_kick_max(enum df_device device, unsigned int duration_ms, bool always)
+void devfreq_boost_kick_max(enum df_device device, unsigned int duration_ms, bool always)
 {
 	struct df_boost_drv *d = &df_boost_drv_g;
 
-	__devfreq_boost_kick_max(&d->devices[device], duration_ms, always);
+	__devfreq_boost_kick_max(&d->devices[device], duration_ms, always, always);
 }
 
 void devfreq_register_boost_device(enum df_device device, struct devfreq *df)
