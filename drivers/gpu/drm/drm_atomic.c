@@ -2261,11 +2261,13 @@ static int __drm_mode_atomic_ioctl(struct drm_device *dev, void *data,
 			(arg->flags & DRM_MODE_PAGE_FLIP_EVENT))
 		return -EINVAL;
 
-	if (!(arg->flags & DRM_MODE_ATOMIC_TEST_ONLY) {
+#ifdef CONFIG_CPU_INPUT_BOOST
+	if (!(arg->flags & DRM_MODE_ATOMIC_TEST_ONLY)) {
 		//7000ms covers long scrolls after input boosting is no longer used
 				if (time_before(jiffies, last_input_time + msecs_to_jiffies(7000)))
 					devfreq_boost_kick(DEVFREQ_CPU_DDR_BW);
 			}
+#endif
 
 	drm_modeset_acquire_init(&ctx, 0);
 
