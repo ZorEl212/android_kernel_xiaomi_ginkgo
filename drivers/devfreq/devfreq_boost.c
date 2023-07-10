@@ -13,7 +13,7 @@
 #include <linux/slab.h>
 #include <uapi/linux/sched/types.h>
 
-#ifndef CONFIG_CPU_INPUT_BOOST
+#if(CONFIG_INPUT_BOOST_DURATION_MS == 0)
 	unsigned long last_input_time;
 #endif
 
@@ -240,7 +240,7 @@ static void devfreq_boost_input_event(struct input_handle *handle,
 
 	d->last_input_jiffies = jiffies;
 
-#ifndef CONFIG_CPU_INPUT_BOOST
+#if(CONFIG_INPUT_BOOST_DURATION_MS == 0)
 	last_input_time = jiffies;
 #endif
 }
