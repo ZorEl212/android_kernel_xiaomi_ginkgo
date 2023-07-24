@@ -62,6 +62,7 @@ module_param(wake_boost_duration, short, 0644);
 #if(CONFIG_INPUT_BOOST_DURATION_MS != 0)
 unsigned long last_input_time;
 #endif
+unsigned long last_mb_time;
 
 enum {
 	SCREEN_OFF,
@@ -221,6 +222,7 @@ void cpu_input_boost_kick_max(unsigned int duration_ms)
 	struct boost_drv *b = &boost_drv_g;
 
 	__cpu_input_boost_kick_max(b, duration_ms);
+	last_mb_time = jiffies;
 }
 
 static void input_unboost_worker(struct work_struct *work)
