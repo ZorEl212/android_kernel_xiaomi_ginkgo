@@ -25,7 +25,7 @@
 
 		fstab {
 			vendor {
-				status="disabled";
+				fsmgr_flags = "wait,avb,logical";
 			};
 		};
 	};

@@ -391,9 +391,23 @@
 			};
 			fstab {
 				compatible = "android,fstab";
+
+				system {
+				compatible = "android,system";
+				dev = "system";
+				type = "ext4";
+				mnt_flags = "ro,barrier=1";
+				fsmgr_flags = "wait,avb,logical";
+				status = "ok";
+			};
 				vendor {
-					status = "disabled";
-				};
+				compatible = "android,vendor";
+				dev = "vendor";
+				type = "ext4";
+				mnt_flags = "ro,barrier=1";
+				fsmgr_flags = "wait,avb,logical";
+				status = "ok";
+					};
 			};
 		};
 	};
