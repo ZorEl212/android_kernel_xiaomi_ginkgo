@@ -465,7 +465,7 @@ static int mmc_poll_for_busy(struct mmc_card *card, unsigned int timeout_ms,
 	u32 status = 0;
 	bool expired = false;
 	bool busy = false;
-
+	int retries = 5;
 	/*
 	 * In cases when not allowed to poll by using CMD13 or because we aren't
 	 * capable of polling by using ->card_busy(), then rely on waiting the
