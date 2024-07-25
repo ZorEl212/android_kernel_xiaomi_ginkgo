@@ -91,6 +91,7 @@ exit:
 static void msg_submit(struct mbox_chan *chan)
 {
 	int err = 0;
+	unsigned long flags;
 
 	/*
 	 * If the controller returns -EAGAIN, then it means, our spinlock
@@ -108,7 +109,7 @@ static void msg_submit(struct mbox_chan *chan)
 		/* but only if not already active */
 		if (!hrtimer_active(&chan->mbox->poll_hrt)) {
 			spin_lock_irqsave(&chan->mbox->poll_hrt_lock, flags);
-			hrtimer_start(&chan->	/* kick start the timer immediately to avoid delays */
+			hrtimer_start(&chan->mbox->poll_hrt, 0, HRTIMER_MODE_REL);
 		}
 	}
 }
