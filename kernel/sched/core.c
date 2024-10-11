@@ -8156,6 +8156,27 @@ static u64 cpu_uclamp_ls_read_u64(struct cgroup_subsys_state *css,
 
 	return (u64) tg->latency_sensitive;
 }
+
+#if !defined(CONFIG_SCHED_TUNE)
+
+static u64 st_prefer_idle_read(struct cgroup_subsys_state *css,
+			     struct cftype *cft)
+{
+	if (!strlen(css->cgroup->kn->name))
+		return -EINVAL;
+
+	return cpu_uclamp_ls_read_u64(css, cft);
+}
+
+static int st_prefer_idle_write(struct cgroup_subsys_state *css,
+			     struct cftype *cft, u64 prefer_idle)
+{
+	if (!strlen(css->cgroup->kn->name))
+		return -EINVAL;
+
+	return cpu_uclamp_ls_write_u64(css, cft, prefer_idle);
+}
+#endif /* !defined(CONFIG_SCHED_TUNE) */
 #endif /* CONFIG_UCLAMP_TASK_GROUP */
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
@@ -8515,7 +8536,14 @@ static struct cftype cpu_files[] = {
 		.read_u64 = cpu_uclamp_ls_read_u64,
 		.write_u64 = cpu_uclamp_ls_write_u64,
 	},
-#endif
+#if !defined(CONFIG_SCHED_TUNE)
+	{
+		.name = "schedtune.prefer_idle",
+		.read_u64 = st_prefer_idle_read,
+		.write_u64 = st_prefer_idle_write,
+	},
+#endif /* !defined(CONFIG_SCHED_TUNE) */
+#endif /* CONFIG_UCLAMP_TASK_GROUP */
 	{ }	/* Terminate */
 };
 
