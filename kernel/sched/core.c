@@ -5779,8 +5779,12 @@ SYSCALL_DEFINE4(sched_getattr, pid_t, pid, struct sched_attr __user *, uattr,
 	kattr.sched_policy = p->policy;
 	if (p->sched_reset_on_fork)
 		kattr.sched_flags |= SCHED_FLAG_RESET_ON_FORK;
-	get_params(p, &kattr);
-	kattr.sched_flags &= SCHED_FLAG_ALL;
+	if (task_has_dl_policy(p))
+		__getparam_dl(p, &kattr);
+	else if (task_has_rt_policy(p))
+		kattr.sched_priority = p->rt_priority;
+	else
+		kattr.sched_nice = task_nice(p);
 
 #ifdef CONFIG_UCLAMP_TASK
 	/*
