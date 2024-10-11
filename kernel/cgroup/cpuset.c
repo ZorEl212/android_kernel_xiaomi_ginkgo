@@ -1870,10 +1870,6 @@ int cpu_uclamp_ls_write_u64(struct cgroup_subsys_state *css,
                               struct cftype *cftype, u64 ls);
 u64 cpu_uclamp_ls_read_u64(struct cgroup_subsys_state *css,
                              struct cftype *cft);
-int cpu_uclamp_boost_write_u64(struct cgroup_subsys_state *css,
-                              struct cftype *cftype, u64 boost);
-u64 cpu_uclamp_boost_read_u64(struct cgroup_subsys_state *css,
-                             struct cftype *cft);
 
 #if !defined(CONFIG_SCHED_TUNE)
 static u64 st_boost_read(struct cgroup_subsys_state *css,
@@ -2035,12 +2031,6 @@ static struct cftype files[] = {
 		.flags = CFTYPE_NOT_ON_ROOT,
 		.read_u64 = cpu_uclamp_ls_read_u64,
 		.write_u64 = cpu_uclamp_ls_write_u64,
-	},
-	{
-		.name = "uclamp.boosted",
-		.flags = CFTYPE_NOT_ON_ROOT,
-		.read_u64 = cpu_uclamp_boost_read_u64,
-		.write_u64 = cpu_uclamp_boost_write_u64,
 	},
 #if !defined(CONFIG_SCHED_TUNE)
 	{
