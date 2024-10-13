@@ -6,12 +6,14 @@
 # Copyright (C) 2023-2024 Yeabsira D.
 
 SECONDS=0 # builtin bash timer
-ZIPNAME="Astra-ginkgo-v1.0-$(TZ=Asia/Kolkata date +"%Y%m%d-%H%M").zip"
+ZIPNAME="Astra-KSU-ginkgo-v1.2-$(TZ=Asia/Kolkata date +"%Y%m%d-%H%M").zip"
 TC_DIR="$HOME/tc/prelude-clang"
 GCC_64_DIR="$HOME/tc/aarch64-linux-android-4.9"
 GCC_32_DIR="$HOME/tc/arm-linux-androideabi-4.9"
 AK3_DIR="AnyKernel3"
 DEFCONFIG="vendor/ginkgo-perf_defconfig"
+KSUVER="11872"
+
 export PATH="$TC_DIR/bin:$PATH"
 
 # Build Environment
@@ -53,7 +55,9 @@ mkdir -p out
 make O=out ARCH=arm64 $DEFCONFIG
 
 echo -e "\nStarting compilation...\n"
-make -j$(nproc --all) O=out ARCH=arm64 CC=clang LD=ld.lld AR=llvm-ar AS=llvm-as NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip CROSS_COMPILE=$GCC_64_DIR/bin/aarch64-linux-android- CROSS_COMPILE_ARM32=$GCC_32_DIR/bin/arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu- Image.gz-dtb dtbo.img dtb.img
+make -j$(nproc --all) O=out ARCH=arm64 CC=clang LD=ld.lld AR=llvm-ar AS=llvm-as NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip CROSS_COMPILE=$GCC_64_DIR/bin/aarch64-linux-android- CROSS_COMPILE_ARM32=$GCC_32_DIR/bin/arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu-  \
+        	KBUILD_BUILD_FEATURES="ksu:# $KSUVER / ඞ 1.3.8 \ By: Yeab (k_y_c_i_i_9_1)" \
+            Image.gz-dtb dtbo.img dtb.img
 
 if [ -f "out/arch/arm64/boot/Image.gz-dtb" ] && [ -f "out/arch/arm64/boot/dtbo.img" ]; then
 echo -e "\nKernel compiled succesfully! Zipping up...\n"
