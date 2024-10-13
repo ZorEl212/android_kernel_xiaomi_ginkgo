@@ -219,7 +219,7 @@ static void _sched_set_boost(int type)
 #if defined(CONFIG_CPU_INPUT_BOOST) && defined(CONFIG_DEVFREQ_BOOST)
 	if (type > 0) {
 		cpu_input_boost_kick();
-		devfreq_boost_kick(DEVFREQ_MSM_CPUBW);
+		devfreq_boost_kick(DEVFREQ_CPU_DDR_BW);
 	}
 		return;
 #endif
