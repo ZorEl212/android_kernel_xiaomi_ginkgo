@@ -6,7 +6,7 @@
 # Copyright (C) 2023-2024 Yeabsira D.
 
 SECONDS=0 # builtin bash timer
-ZIPNAME="Astra-KSU-ginkgo-v1.2-$(TZ=Asia/Kolkata date +"%Y%m%d-%H%M").zip"
+ZIPNAME="Astra-ginkgo-v1.3-$(TZ=Asia/Kolkata date +"%Y%m%d-%H%M").zip"
 TC_DIR="$HOME/tc/prelude-clang"
 GCC_64_DIR="$HOME/tc/aarch64-linux-android-4.9"
 GCC_32_DIR="$HOME/tc/arm-linux-androideabi-4.9"
