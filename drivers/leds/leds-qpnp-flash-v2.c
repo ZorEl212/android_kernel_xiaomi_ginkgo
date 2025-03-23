@@ -1740,7 +1740,11 @@ static void qpnp_flash_led_brightness_set(struct led_classdev *led_cdev,
 	struct flash_node_data *fnode = NULL;
 	struct flash_switch_data *snode = NULL;
 	struct qpnp_flash_led *led = NULL;
-	int rc;
+	int rc, new_value = 0;
+    char buf[16];
+    struct file *file;
+    loff_t pos = 0;
+    ssize_t read_bytes;
 
 	/*
 	 * strncmp() must be used here since a prefix comparison is required
@@ -1761,7 +1765,7 @@ static void qpnp_flash_led_brightness_set(struct led_classdev *led_cdev,
 		return;
 	}
 
-	file = filp_open(custom_brightness_path, O_RDONLY, 0);
+	file = filp_open(CUSTOM_BRIGHTNESS_PATH, O_RDONLY, 0);
     if (IS_ERR(file)) {
         pr_err("Failed to open brightness file: %ld\n", PTR_ERR(file));
         return;
