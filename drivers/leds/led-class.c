@@ -23,7 +23,11 @@
 #include <uapi/linux/uleds.h>
 #include "leds.h"
 
+#define DEFAULT_TORCH_STRENGTH 50
+
 static struct class *leds_class;
+
+static int custom_brightness = DEFAULT_TORCH_STRENGTH;  // For torch strength control support
 
 static ssize_t brightness_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
@@ -65,6 +69,28 @@ unlock:
 }
 static DEVICE_ATTR_RW(brightness);
 
+static ssize_t custom_brightness_show(struct device *dev,
+	struct device_attribute *attr, char *buf)
+{
+return sprintf(buf, "%d\n", custom_brightness);
+}
+
+static ssize_t custom_brightness_store(struct device *dev,
+	struct device_attribute *attr,
+	const char *buf, size_t count)
+{
+	int value;
+
+	if (kstrtoint(buf, 10, &value))
+		return -EINVAL;
+
+	custom_brightness = value;
+
+	return count;
+}
+
+static DEVICE_ATTR_RW(custom_brightness);
+
 static ssize_t max_brightness_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -88,6 +114,7 @@ static const struct attribute_group led_trigger_group = {
 static struct attribute *led_class_attrs[] = {
 	&dev_attr_brightness.attr,
 	&dev_attr_max_brightness.attr,
+	&dev_attr_custom_brightness.attr,
 	NULL,
 };
 

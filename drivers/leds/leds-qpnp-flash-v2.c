@@ -31,6 +31,7 @@
 #include <linux/leds-qpnp-flash-v2.h>
 #include <linux/qpnp/qpnp-revid.h>
 #include <linux/log2.h>
+#include <linux/fs.h>
 #include "leds.h"
 
 #define	FLASH_LED_REG_LED_STATUS1(base)		(base + 0x08)
@@ -190,6 +191,8 @@
 #define	MAX_IRES_LEVELS					4
 #define	FLASH_BST_PWM_OVRHD_MIN_UV			300000
 #define	FLASH_BST_PWM_OVRHD_MAX_UV			600000
+
+#define CUSTOM_BRIGHTNESS_PATH "/sys/devices/platform/soc/1c40000.qcom,spmi/spmi-0/spmi0-03/1c40000.qcom,spmi:qcom,pmi632@3:qcom,leds@d300/leds/led:torch_0/custom_brightness"
 
 /* notifier call chain for flash-led irqs */
 static ATOMIC_NOTIFIER_HEAD(irq_notifier_list);
@@ -1758,13 +1761,33 @@ static void qpnp_flash_led_brightness_set(struct led_classdev *led_cdev,
 		return;
 	}
 
+	file = filp_open(custom_brightness_path, O_RDONLY, 0);
+    if (IS_ERR(file)) {
+        pr_err("Failed to open brightness file: %ld\n", PTR_ERR(file));
+        return;
+    }
+
+    read_bytes = kernel_read(file, buf, sizeof(buf) - 1, &pos);
+    filp_close(file, NULL);
+
+    if (read_bytes > 0) {
+        buf[read_bytes] = '\0';
+        if (kstrtoint(buf, 10, &new_value) == 0) {
+            pr_info("Brightness read from file: %d\n", new_value);
+        } else {
+            pr_err("Failed to convert brightness value\n");
+        }
+    } else {
+        pr_err("Failed to read brightness file\n");
+    }
+
 	spin_lock(&led->lock);
 	if (snode) {
 		rc = qpnp_flash_led_switch_set(snode, value > 0);
 		if (rc < 0)
 			pr_err("Failed to set flash LED switch rc=%d\n", rc);
 	} else if (fnode) {
-		qpnp_flash_led_node_set(fnode, value);
+		qpnp_flash_led_node_set(fnode, new_value);
 	}
 
 	spin_unlock(&led->lock);
